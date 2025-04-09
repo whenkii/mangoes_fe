@@ -21,7 +21,7 @@ export const GetSQLOutput = props => {
 
 export const GetApiData = (sql, fileName) => {
 const apiUrl = `${config.restAPIserver}:${config.restAPIHost}/api/adhocSqlsViaBodyPost`;
-// console.log(apiUrl)
+console.log(sql)
 return axios.post(apiUrl,{sqltext:sql, fileName:fileName})
 .then ((result) => {
 // console.log(result)

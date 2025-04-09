@@ -1,0 +1,46 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2821
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww33960\viewh18900\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 nohup node index.js  > server.log   &\
+\
+\'97 Server html/static files\
+\
+/var/www/html/static/js\
+\
+replace\
+\
+%s/abc/bcd/g\
+\
+\
+/home/baruvenki\
+\
+\
+\
+\
+1. Restart Webserver if its stopped using below script\
+========================================\
+\
+#!/bin/bash\
+\
+# Check if any 'node' process is running\
+if ! pgrep -f "index.js" > /dev/null\
+then\
+  echo "Node process not running. Restarting..."\
+  # Replace with your actual start command and path\
+  cd mangoes2025/webserver\
+  nohup node index.js >> server.log 2>&1 &\
+else\
+        echo "@ $(date),  Node is running."\
+fi\
+\
+2. Enable cron using below\
+\
+  a) create a file with the anme checknodeapp.cron and code as below\
+ \
+	* * * * * nohup /home/baruvenki/cron.sh >> /home/baruvenki/mangoes2025/webserver/server.log 2>&1 &\
+\
+  b) crontab checknodeapp.cron}

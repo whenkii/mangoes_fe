@@ -77,7 +77,7 @@ export default function SignUp() {
                 }
             })
             .catch((e) => {
-            alert("Couldn't get data from Database")
+                toast.error("Account cration failed")
             // if error, return 0 rows
             return [];
             });

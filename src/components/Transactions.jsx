@@ -3,6 +3,7 @@ import axios from 'axios';
 import {config} from './reactConfig'
 import DynamicForm from "./DynamicForm";
 import {accountsContext} from '../contexts/accountsContext'
+import {AllSpinners} from './Spinners'
 
 export default function Transactions(props) {
   const [accountInfo] = useContext(accountsContext);
@@ -102,7 +103,7 @@ export default function Transactions(props) {
 
   useEffect(() => {setFormLoaded(true)});
 
-  if (!formLoaded) return <div>   </div>
+  if (!formLoaded) return <div>   <AllSpinners /> </div>
 
   return <div>
         <DynamicForm 

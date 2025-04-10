@@ -13,7 +13,7 @@ export default function TransactionDetails(props) {
     const navigate = useNavigate();
     const {id}= useParams()
     const [accountInfo] = useContext(accountsContext);
-    console.log(accountInfo.email)
+    // console.log(accountInfo.email)
     const query = `select * from transactions where src='${accountInfo.email}' or tgt='${accountInfo.email}'`;
     const [orderDetails,setOrderDetails]= useState([]);
 

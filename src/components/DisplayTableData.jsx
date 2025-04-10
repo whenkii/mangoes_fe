@@ -102,6 +102,11 @@ useEffect(() => {
     return (
         <TableContainer>
             <ToastContainer position="top-center" autoClose="1000"/>
+            {comp === "TRANSACTIONDETAILS" &&
+                 <div className="d-flex justify-content-center">
+                     <div className="btn btn-success m-1" onClick={ () => navigate("/transactions")}>ADD TRANSACTION</div>
+                 </div>
+                 }
              {stateVar.length > 0 ?
              <div>
                  {comp === "ORDERDETAILS" &&
@@ -111,11 +116,6 @@ useEffect(() => {
                      <div className="btn btn-warning m-1" onClick={() => OrderAction("NEW")}>NEW</div>
                      <div className="btn btn-info m-1" onClick={() => OrderAction("COMMENTS")}>COMMENTS</div>
                      <div className="btn btn-secondary m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
-                 </div>
-                 }
-                 {comp === "TRANSACTIONDETAILS" &&
-                 <div className="d-flex justify-content-center">
-                     <div className="btn btn-success m-1" onClick={ () => navigate("/transactions")}>ADD TRANSACTION</div>
                  </div>
                  }
                 <div className="d-flex justify-content-end">

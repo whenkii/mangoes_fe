@@ -77,7 +77,7 @@ export default function SignUp() {
                 }
             })
             .catch((e) => {
-                toast.error("Account cration failed")
+                // toast.error("Account cration failed")
             // if error, return 0 rows
             return [];
             });

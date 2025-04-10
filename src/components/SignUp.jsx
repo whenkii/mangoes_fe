@@ -77,7 +77,6 @@ export default function SignUp() {
                 }
             })
             .catch((e) => {
-            console.log("SQL in GetApiData"+e);
             alert("Couldn't get data from Database")
             // if error, return 0 rows
             return [];

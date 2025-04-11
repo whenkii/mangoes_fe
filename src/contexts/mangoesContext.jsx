@@ -151,7 +151,7 @@ useEffect( () => {
     useEffect( () => {
         GetApiData("select * from react_config")
         .then((res) => {
-            // console.log((res));
+            console.log((res));
             // console.log(res)
             if (res[0] === "ERROR"){
                 alert("Error while getting data from DB");    

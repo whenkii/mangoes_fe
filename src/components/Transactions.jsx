@@ -3,72 +3,76 @@ import axios from 'axios';
 import {config} from './reactConfig'
 import DynamicForm from "./DynamicForm";
 import {accountsContext} from '../contexts/accountsContext'
+import {productContext} from '../contexts/mangoesContext'
 import {AllSpinners} from './Spinners'
 
 export default function Transactions(props) {
   const [accountInfo] = useContext(accountsContext);
   const [formLoaded, setFormLoaded] = useState(false);
-  const formSchemaInit = {
-    formId:"Transactions",
-    fields: [
-        {
-          type: "listbox",
-          label: "FROM",
-          name: "src",
-          options:[],
-          required: true,
-        },
-        {
-          type: "listbox",
-          label: "TO",
-          name: "tgt",
-          options:[],
-          required: true
-        },
-        {
-          type: "text",
-          label: "AMOUNT",
-          name: "amount",
-          required: true,
-        },
-        {
-          type: "listbox",
-          label: "CURRENCY",
-          name: "currency",
-          options:[{label:"SGD",vlue:"SGD"},{label:"INR",vlue:"INR"}],
-          required: true,
-        },
-        {
-          type: "listbox",
-          label: "TYPE",
-          name: "TRANSACTION_TYPE",
-          options:[{label:"SHIPMENT",vlue:"SHIPMENT"},{label:"PERSONAL",vlue:"PERSONAL"}],
-          required: true,
-        }
-        ,
-        {
-          type: "text",
-          label: "SHIPMENT_ID",
-          name: "REFERENCE_ID",
-          required: false
-        }
-        ,
-        {
-          type: "text",
-          label: "comments",
-          name: "comments",
-          required: false,
-        }
-      ],
-    "proc":"sp_insert_transactions",
-    "rec":"TRANSACTION_REC",
-    "successMessage":"Transaction successfully logged",
-    "failedMessage":"Transaction failed to log",
-    "navigateTo":"/transactiondetails"
-  };
+  const [[,,,,,,,,,,,,configState]] = useContext(productContext);
+  // console.log(configState)
+  // const formSchemaInit = {
+  //   formId:"Transactions",
+  //   fields: [
+  //       {
+  //         type: "listbox",
+  //         label: "FROM",
+  //         name: "src",
+  //         options:[],
+  //         required: true,
+  //       },
+  //       {
+  //         type: "listbox",
+  //         label: "TO",
+  //         name: "tgt",
+  //         options:[],
+  //         required: true
+  //       },
+  //       {
+  //         type: "text",
+  //         label: "AMOUNT",
+  //         name: "amount",
+  //         required: true,
+  //       },
+  //       {
+  //         type: "listbox",
+  //         label: "CURRENCY",
+  //         name: "currency",
+  //         options:[{label:"SGD",vlue:"SGD"},{label:"INR",vlue:"INR"}],
+  //         required: true,
+  //       },
+  //       {
+  //         type: "listbox",
+  //         label: "TYPE",
+  //         name: "TRANSACTION_TYPE",
+  //         options:[{label:"SHIPMENT",vlue:"SHIPMENT"},{label:"PERSONAL",vlue:"PERSONAL"}],
+  //         required: true,
+  //       }
+  //       ,
+  //       {
+  //         type: "text",
+  //         label: "SHIPMENT_ID",
+  //         name: "REFERENCE_ID",
+  //         required: false
+  //       }
+  //       ,
+  //       {
+  //         type: "text",
+  //         label: "comments",
+  //         name: "comments",
+  //         required: false,
+  //       }
+  //     ],
+  //   "proc":"sp_insert_transactions",
+  //   "rec":"TRANSACTION_REC",
+  //   "successMessage":"Transaction successfully logged",
+  //   "failedMessage":"Transaction failed to log",
+  //   "navigateTo":"/transactiondetails"
+  // };
 
   // const query = `select firstname||', '||lastname user_name from users where type like 'admin'` ;
-  const [formSchema,setFormSchema]= useState(formSchemaInit);
+  const [formSchema,setFormSchema]= useState(configState ? configState.filter( a => a.NAME='LOG_TRANSACTIONS_FORM' ).JSON_STRING:{});
+  console.log(configState.filter( a => a.NAME='LOG_TRANSACTIONS_FORM' ).JSON_STRING)
   // const [usersList,setUiserslistUpdated]= useState(false);
   const query = `SELECT firstname || ', ' || lastname AS user_name,email FROM users WHERE type LIKE 'admin'`;
   //Mount - Get Users details
@@ -104,7 +108,7 @@ export default function Transactions(props) {
   useEffect(() => {setFormLoaded(true)});
 
   if (!formLoaded) return <div>   <AllSpinners /> </div>
-
+  if (!configState) return <div>   <AllSpinners /> </div>
   return <div>
         <DynamicForm 
           formSchema={formSchema} 

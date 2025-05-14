@@ -25,8 +25,11 @@ const productNames = {Alphonso:["ఆల్పాన్సా/ఖాదర్","�
                       Mallika:["మల్లికా","मल्लिका","மல்லிகா","ಮಲ್ಲಿಕಾ"],
                       Neelam:["నీలం","नीलम","நீலம்","ನೀಲಂ"],
                       Kalepadu:["కాలేపాడు","कालेपाडु","காலேபாடு"],
+                      Malgova:["మాల్గోవా","माल्गोआ","மால்கோவா"],
                       ImamPasand:["ఇమామ్ పసంద్","इमाम पसंद","இமாம் பஸ்சந்த்","ಇಮಾಮ ಪಸಂದ್"],
-                      PeddaRasalu:["పెద్ద రసాలు","Juicy Mango"]};
+                      PeddaRasalu:["పెద్ద రసాలు","Juicy Mango"],
+                      CherukuRasalu:["చెరుకు రసాలు","Juicy Mango"],
+                      ChinnaRasalu:["చిన్న రసాలు","Juicy Mango"]};
 const productColors = ["secondary","warning","info","dark"];
 const [areaNames,setAreas]=useState({})
 const [loaded,setLoaded]=useState(false)

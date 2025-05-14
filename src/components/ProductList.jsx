@@ -140,7 +140,7 @@ useEffect( () => {
                                     <p className="prodWeight">({item.UNITS})</p>
                                     </div>
                                 <div className="d-flex flex-column justify-content-center border-left m-auto">
-                                        {productNames[item.NAME].sort(() => (Math.random() > .5) ? 1 : -1).map((item,i) => 
+                                        {(productNames[item.NAME]|| []).sort(() => (Math.random() > .5) ? 1 : -1).map((item,i) => 
                                         <div key={i} className={`prod-name-list ml-3 text-${productColors[i]}`}>{item}</div>
                                         )
                                         }

@@ -1,167 +1,200 @@
-import React,{useState,useEffect,useContext} from 'react'
-import {Link,useNavigate} from 'react-router-dom'
-import {AllSpinners} from './Spinners'
-import styled from 'styled-components'
-// import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-// import {faArrowUp} from '@fortawesome/free-solid-svg-icons';
-// import {faArrowDown} from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AllSpinners } from './Spinners';
+import styled from 'styled-components';
 import { CSVLink } from "react-csv";
-// import { GiConsoleController } from 'react-icons/gi';
 import { GetApiDataUpdate } from '../components/ApiCalls';
-import { ToastContainer,toast } from 'react-toastify';
-import {accountsContext} from '../contexts/accountsContext'
+import { ToastContainer, toast } from 'react-toastify';
+import { accountsContext } from '../contexts/accountsContext';
 
-export default function DisplayTableData({state,comp,id,bgClr}) {
+export default function DisplayTableData({ state, comp, id, bgClr }) {
+    const navigate = useNavigate();
+    const [accountInfo] = useContext(accountsContext);
 
-const navigate = useNavigate();
-const [accountInfo] = useContext(accountsContext);
+    const [stateVar, setOrderDetails] = useState(state);
+    const [sort, setSort] = useState({ propertyName: "", mode: 'ASC' });
+    const [filters, setFilters] = useState({
+        STATUS: '',
+        DEL_MODE: '',
+        PAYMENT_UPD_BY: '',
+        LOCATION: []
+    });
 
-let stateVarInitial = state;
-let hyperLinks = {attr:"ORDER_ID",link:"/orderdetails"}
-// [{comp:"ORDERS",attr:"ORDER_ID",link:"/orderdetails"},{comp:"ALLORDERS",attr:"ORDER_ID",link:"/orderdetails"}]
+    const hyperLinks = { attr: "ORDER_ID", link: "/orderdetails" };
 
-const [stateVar,setOrderDetails]= useState(stateVarInitial);
-const [sort,setSort]= useState({propertyName:"",mode:'ASC'});
-
-const propComparator = (propName,type) => (a, b) => {
-
-    if (type === 'ASC') 
-    {
-         if(a[propName] < b[propName]){
-                    return -1;
-            // a should come after b in the sorted order
-            }else if(a[propName] > b[propName]){
-                    return 1;
-            // a and b are the same
+    const getDistinctValues = (data, key) => {
+        const uniqueMap = {};
+        data.forEach(item => {
+            const val = item[key];
+            if (val) {
+                uniqueMap[val.toLowerCase()] = val; // Case-insensitive uniqueness
             }
-            else{
-                    return 0;
-            }
-    }
+        });
+        return Object.values(uniqueMap).sort(); // Return values sorted
+    };
 
-    if (type === 'DSC') 
-    {
-        if(a[propName] > b[propName]){
-                return -1;
-        // a should come after b in the sorted order
-        }else if(a[propName] < b[propName]){
-                return 1;
-        // a and b are the same
+    const propComparator = (propName, type) => (a, b) => {
+        if (type === 'ASC') return a[propName] < b[propName] ? -1 : a[propName] > b[propName] ? 1 : 0;
+        if (type === 'DSC') return a[propName] > b[propName] ? -1 : a[propName] < b[propName] ? 1 : 0;
+        return 0;
+    };
+
+    const orderbyAttribute = (props) => {
+        const newMode = sort.mode === 'ASC' ? 'DSC' : 'ASC';
+        setSort({ propertyName: props, mode: newMode });
+        const newOrders = [...stateVar].sort(propComparator(props, newMode));
+        setOrderDetails(newOrders);
+    };
+
+    const OrderAction = (action) => {
+        const sql = `update orders set status='${action}',modified_by='${accountInfo.email}' where id=${id}`;
+        if (action === 'COMMENTS') {
+            navigate(`/addcomments/${id}`);
+        } else if (action === 'STOCK') {
+            navigate(`/STOCK/${id}`);
+        } else {
+            GetApiDataUpdate(sql)
+                .then((res) => {
+                    if (res > 0) {
+                        toast.success("Order Updated");
+                        navigate(-1);
+                    } else {
+                        toast.error("Error !!!");
+                    }
+                })
+                .catch((e) => alert(e));
         }
-        else{
-                return 0;
-        }
-    }
+    };
 
-};
+    const filteredData = stateVar.filter(item =>
+        (filters.STATUS ? (item.STATUS || '').toLowerCase() === filters.STATUS.toLowerCase() : true) &&
+        (filters.DEL_MODE ? (item.DEL_MODE || '').toLowerCase() === filters.DEL_MODE.toLowerCase() : true) &&
+        (filters.PAYMENT_UPD_BY ? (item.PAYMENT_UPD_BY || '').toLowerCase() === filters.PAYMENT_UPD_BY.toLowerCase() : true) &&
+        (filters.LOCATION.length > 0 ? filters.LOCATION.includes(item.LOCATION) : true)
+    );
 
-const orderbyAttribute = (props) => {
-    setSort(prevState => ({...prevState,propertyName:props,mode:sort.mode === 'ASC' ? 'DSC' : "ASC"}))
-    // console.log(sort)
-    let newOrders = stateVar.sort(propComparator(props,sort.mode));
-    setOrderDetails(() => [...newOrders]);
-    }      
-    
-const OrderAction = (props) => {
+    useEffect(() => {
+        setOrderDetails(state);
+    }, [state]);
 
-
-    const sql = `update orders set status='${props}',modified_by='${accountInfo.email}' where id=${id}`;
-    if ( props  === 'COMMENTS' ) {
-        navigate(`/addcomments/${id}`)
-    }
-    else if ( props  === 'STOCK' ) {
-        navigate(`/STOCK/${id}`)
-    }
-    else {
-    GetApiDataUpdate(sql)
-    .then((res) => {
-        // console.log(res)
-        if (res > 0 ){
-            toast.success("Order Updated");
-            navigate(-1);
-        }
-        else {
-            toast.error( `Error !!!`) ;
-        }
-        }
-        )
-    .catch ( (e) => {
-            alert(e)
-            })
-            }
-    }
-
-useEffect(() => {
-    setOrderDetails(stateVarInitial);
-}, [stateVarInitial])
-//Unmount
-useEffect(() => {
-  return () => setOrderDetails([]);
-}, [stateVarInitial])   
+    useEffect(() => {
+        return () => setOrderDetails([]);
+    }, [state]);
 
     return (
         <TableContainer>
-            <ToastContainer position="top-center" autoClose="1000"/>
+            <ToastContainer position="top-center" autoClose={1000} />
+
             {comp === "TRANSACTIONDETAILS" &&
-                 <div className="d-flex justify-content-center">
-                     <div className="btn btn-success m-1" onClick={ () => navigate("/transactions")}>ADD TRANSACTION</div>
-                 </div>
-                 }
-             {stateVar.length > 0 ?
-             <div>
-                 {comp === "ORDERDETAILS" &&
-                 <div className="d-flex justify-content-center">
-                     <div className="btn btn-success m-1" onClick={ () => OrderAction("DELIVERED")}>DELIVERED</div>
-                     <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCELLED</div>
-                     <div className="btn btn-warning m-1" onClick={() => OrderAction("NEW")}>NEW</div>
-                     <div className="btn btn-info m-1" onClick={() => OrderAction("COMMENTS")}>COMMENTS</div>
-                     <div className="btn btn-secondary m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
-                 </div>
-                 }
-                <div className="d-flex justify-content-end">
-                         <CSVLink className="text-danger csv-exporter mb-1" data={stateVar}>Export CSV</CSVLink>
+                <div className="d-flex justify-content-center">
+                    <div className="btn btn-success m-1" onClick={() => navigate("/transactions")}>ADD TRANSACTION</div>
                 </div>
+            }
 
-                <div className="table-responsive bordered">
-                    <table className="table text-center">
-                        <thead className="thead">
-                            <tr className="header">
-                                {Object.keys(stateVar[0]).map((item,index) => 
-                                    <th key={index} className="border">
-                                        <ButtonContainer onClick={() => orderbyAttribute(item)}>
-                                            <div className="row">
-                                                <div className={`col tab-headings ${sort.propertyName === item ? " text-danger":null}`} >{item}</div>  
-                                                <span className={`col ${sort.propertyName === item ? " text-danger":null}`}>
-                                                    {/* {sort.propertyName === item ? <FontAwesomeIcon className="text-dark" icon={sort.mode === "ASC" ? faArrowUp : faArrowDown} /> :null} */}
-                                                    </span>
-                                            </div>
-                                        </ButtonContainer>
-                                    </th>
-                                )}
-                            </tr>
-                        </thead>
-                        <tbody className={`bod  bg-${bgClr}`}>
-                        {stateVar.map((dataArray,index) =>
-                            <tr key={index}> 
-                                {Object.keys(state[0]).map( (attrName,index) =>
-                                    <th key={index} scope="row" className={`border tdata ${attrName === "PRICE" ? "text-danger":"text-dark"}`}> 
-                                    { attrName === hyperLinks.attr 
-                                    // && comp === hyperLinks.comp 
-                                    ?  
-                                    <Link className="text-danger col" to={`${hyperLinks.link}/${dataArray[attrName]}`}>{dataArray[attrName]}</Link> : dataArray[attrName]}
-                                    </th>
-                                )}
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
+            {stateVar.length > 0 &&
+                <>
+                    {comp === "ORDERDETAILS" &&
+                        <div className="d-flex justify-content-center">
+                            <div className="btn btn-success m-1" onClick={() => OrderAction("DELIVERED")}>DELIVERED</div>
+                            <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCELLED</div>
+                            <div className="btn btn-warning m-1" onClick={() => OrderAction("NEW")}>NEW</div>
+                            <div className="btn btn-info m-1" onClick={() => OrderAction("COMMENTS")}>COMMENTS</div>
+                            <div className="btn btn-secondary m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
+                        </div>
+                    }
+
+                    {/* Filter Section */}
+                    {comp === "ALLORDERS" &&
+                    <div className="row my-2 justify-content-around">
+                    {["STATUS", "DEL_MODE", "PAYMENT_UPD_BY"].map((key) => (
+                        <div className="col-md-2" key={key}>
+                            <select
+                                className="form-select"
+                                value={filters[key]}
+                                onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
+                            >
+                                <option value="">{`All ${key.toUpperCase()}`}</option>
+                                {getDistinctValues(stateVar, key).map((val, idx) => (
+                                    <option key={idx} value={val}>{val}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ))}
+                
+                    {/* Multi-select for LOCATION */}
+                    <div className="col-md-3">
+                        <select
+                            className="form-select"
+                            multiple
+                            value={filters.LOCATION}
+                            onChange={(e) => {
+                                const options = Array.from(e.target.selectedOptions, option => option.value);
+                                setFilters(prev => ({ ...prev, LOCATION: options }));
+                            }}
+                        >
+                            {getDistinctValues(stateVar, "LOCATION").map((val, idx) => (
+                                <option key={idx} value={val}>{val}</option>
+                            ))}
+                        </select>
+                        <small className="text-muted">Hold Ctrl or Cmd to select multiple</small>
+                    </div>
+                
+                    <div className="col-md-2">
+                        <button
+                            className="btn btn-outline-secondary w-100"
+                            onClick={() => setFilters({
+                                STATUS: '',
+                                DEL_MODE: '',
+                                PAYMENT_UPD_BY: '',
+                                LOCATION: []
+                            })}
+                        >
+                            Reset Filters
+                        </button>
+                    </div>
                 </div>
-            </div>
-            : stateVar.length === 0 ? null : <AllSpinners />}
+                    }
+                    <div className="d-flex justify-content-end">
+                        <CSVLink className="text-danger csv-exporter mb-1" data={filteredData}>Export CSV</CSVLink>
+                    </div>
+
+                    <div className="table-responsive bordered">
+                        <table className="table text-center">
+                            <thead className="thead">
+                                <tr className="header">
+                                    {Object.keys(stateVar[0]).map((item, index) =>
+                                        <th key={index} className="border">
+                                            <ButtonContainer onClick={() => orderbyAttribute(item)}>
+                                                <div className="row">
+                                                    <div className={`col tab-headings ${sort.propertyName === item ? " text-danger" : ""}`}>{item}</div>
+                                                </div>
+                                            </ButtonContainer>
+                                        </th>
+                                    )}
+                                </tr>
+                            </thead>
+                            <tbody className={`bod bg-${bgClr}`}>
+                                {filteredData.map((dataArray, index) =>
+                                    <tr key={index}>
+                                        {Object.keys(state[0]).map((attrName, idx) =>
+                                            <th key={idx} scope="row" className={`border tdata ${attrName === "PRICE" ? "text-danger" : "text-dark"}`}>
+                                                {attrName === hyperLinks.attr
+                                                    ? <Link className="text-danger col" to={`${hyperLinks.link}/${dataArray[attrName]}`}>{dataArray[attrName]}</Link>
+                                                    : dataArray[attrName]}
+                                            </th>
+                                        )}
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            }
+
+            {stateVar.length === 0 && <AllSpinners />}
         </TableContainer>
-    )
+    );
 }
-
 
 const TableContainer = styled.div`
 // margin-top:5rem;

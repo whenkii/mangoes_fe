@@ -24,7 +24,32 @@ const currencySymb = currency === "SGD" ? "$" : "";
 const selctiveState = state.map(({PAYMENT,ADDRESS,DELIVERY:DELIVERYMODE}) => ({PAYMENT,ADDRESS,DELIVERYMODE}))[0];
 const newState = state.map(({NAME,OFFERPRICE,QTY,TOTAL}) => ({NAME,OFFERPRICE,QTY,TOTAL}));
 
-const query = `select NAME,OFFERPRICE,QTY,OFFERPRICE*QTY Total,paymode payment,(case when del_mode='delivery' then address else Decode(location,'Punggol','Venkat, Blk - 679A,S-821679,Mob: 81601289','Tampines','Venky, Near Tampines West MRT,520929,Mob:98346177','Pasir Ris','Mohan,Blk 574,Pasir Ris St 53,S-520574,Mobile: 90628025','Upper Changi','Naveen, Blk 718,03-06,Changi Green,486849,Mobile : 86482486','Woodlands','Srinivas Reddy,Blk 724, #03-502,Woodlands ave 6,730724,Mobile : 91003247') end) address,del_mode delivery from orders a,products b,deliveries c where a.prodid=b.id and a.id=c.order_id and a.id=${orderId}`;
+const query = `select b.NAME,OFFERPRICE,QTY,OFFERPRICE*QTY Total,paymode payment,
+(case when del_mode='delivery' then address else ((SELECT 
+       jt.name||','||
+       jt.contact_name||','||
+       jt.block||','||
+       jt.street||','||
+       jt.postal||','||
+       jt.mobile details
+FROM JSON_TABLE(
+  r.json_string,
+  '$.value[*]'
+  COLUMNS (
+    city         VARCHAR2(100)  PATH '$.city',
+    name         VARCHAR2(100)  PATH '$.name',
+    contact_name VARCHAR2(100)  PATH '$.details[0]',
+    block        VARCHAR2(100)  PATH '$.details[1]',
+    street       VARCHAR2(100)  PATH '$.details[2]',
+    postal       VARCHAR2(100)  PATH '$.details[3]',
+    mobile       VARCHAR2(100)  PATH '$.details[4]'
+  )
+) jt
+WHERE jt.name = location) ) end) address,del_mode delivery 
+from orders a,products b,deliveries c ,react_config r
+where a.prodid=b.id and a.id=c.order_id
+and r.name='SELF_LOCATIONS'
+and a.id=${orderId}`;
 useEffect( () => {
     GetApiData(query)
     .then((res) => {

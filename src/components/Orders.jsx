@@ -86,6 +86,40 @@ export function OrderDetails(props) {
     )
 }
 
+export function OrderSummary(props) {
+    const navigate = useNavigate();
+    const {id}= useParams()
+    // const [accountInfo] = useContext(accountsContext);
+    const query = `select b.NAME,category,QTY,a.PRICE,TOTAL_PRICE TOTAL,to_char(a.ts,'DD-MON-YY HH24:MI') TS from orders a join products b on (a.prodid=b.id) where a.id= `+ id ;
+    const [orderDetails,setOrderDetails]= useState([]);
+
+    //Mount - Get Orders details
+    useEffect(() => {
+        axios.get(`${config.restAPIserver}:${config.restAPIHost}/api/getSqlresult/${query}`)
+        .then((result) => {
+            let {data} = result;
+            let {rows} = data;
+    //Set state once data is returned from AXIOS
+        setOrderDetails(rows);
+                         })
+        .catch((e) => {
+                       alert( `Couldn't get Orders from API\n ` + e);
+                        })
+    }, [query])
+    //Unmount
+    useEffect(() => () => {}, []) 
+    return (
+        <OrdeDetailsContainer className="container">
+            <DataHeader className="text-center p-1">ORDERS SUMMARY</DataHeader>
+            <DisplayTableData state={orderDetails} id={id} comp="ORDERSUMMARY"/>
+            <div className="d-flex justify-content-center">
+                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
+                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+            </div>
+        </OrdeDetailsContainer>
+    )
+}
+
 
 export function AllOrders() {
     const [accountInfo] = useContext(accountsContext);

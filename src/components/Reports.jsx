@@ -2,47 +2,28 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-export default function SignIn() {
+export default function Reports() {
   const navigate = useNavigate();
   return (
     <SigninContainer className="container">
       <div className="d-flex justify-content-center flex-wrap">
         <Link
-          to="/addProduct"
+          to="/orderssummary"
           className="btn tabs"
           style={{ background: "var(--amzonChime)" }}
         >
           {" "}
-          Add Product{" "}
+          Orders Summary{" "}
         </Link>
         <Link
-          to="/updateProduct"
+          to="/orderssummarybylocation"
           className="btn tabs"
           style={{ background: "var(--amzonChime)" }}
         >
           {" "}
-          Update Product{" "}
+          OrdersSummary - LocWise{" "}
         </Link>
-        <Link to="/products" className="btn btn-dark tabs">
-          {" "}
-          Products{" "}
-        </Link>
-        <Link to="/allorders" className="btn btn-dark tabs">
-          {" "}
-          All Orders{" "}
-        </Link>
-        <Link to="/shipments" className="btn btn-dark tabs">
-          {" "}
-          Shipments{" "}
-        </Link>
-        <Link to="/transactionDetails" className="btn btn-dark tabs">
-          {" "}
-          Transactions{" "}
-        </Link>
-        <Link to="/adminreports" className="btn btn-dark tabs">
-          {" "}
-          Reports{" "}
-        </Link>
+        
       </div>
 
       <div className="d-flex justify-content-center">

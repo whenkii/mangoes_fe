@@ -13,18 +13,20 @@ import NotFound from "./components/NotFound";
 import OrderConfirmation from "./components/OrderConfirmation";
 import ProductInfo from "./components/ProductInfo";
 import { Orders, OrderDetails, Products, AllOrders } from "./components/Orders";
+import { OrdersSummary,OrdersSummaryByLocation } from "./components/Reportsqls";
 import Checkout from "./components/Checkout";
 import AddComments from "./components/AddComments";
 import AddstockComments from "./components/AddstockComments";
 import Payment from "./components/Payment";
 import Admin from "./components/Admin.js";
+import Reports from "./components/Reports";
 import AddProducts from "./components/AddProducts";
 import UpdateProduct from "./components/UpdateProduct";
 import ContactUs from "./components/ContactUs";
 import Shipments from "./components/Shipments";
 import Transactions from "./components/Transactions";
 import TransactionDetails from "./components/TransactionDetails";
-import { FormProvider } from './contexts/formContext';
+// import { FormProvider } from './contexts/formContext';
 // import IdleTimeCotainer from './components/IdleTimeCotainer'
 
 function App() {
@@ -60,6 +62,9 @@ function App() {
               <Route exact path="/shipments" element={<Shipments />} />
               <Route exact path="/transactions" element={<Transactions />} />
               <Route exact path="/transactionDetails" element={<TransactionDetails />} />
+              <Route exact path="/adminreports" element={<Reports />} />
+              <Route exact path="/orderssummary" element={<OrdersSummary />} />
+              <Route exact path="/orderssummarybylocation" element={<OrdersSummaryByLocation />} />
               <Route exact path="/" element={<ProductList />} />
               <Route element={<NotFound />} />
             </Routes>

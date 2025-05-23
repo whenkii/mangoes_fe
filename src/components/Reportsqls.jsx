@@ -90,9 +90,9 @@ export function OrdersSummaryByLocation(props) {
         <OrdeDetailsContainer className="container">
           { !isLoading ?
           <div>
-            <DataHeader className="text-center p-1">ORDERS SUMMARY - SELF</DataHeader>
-            <DisplayTableData state={orderDetails.filter(a => a.DEL_MODE === 'delivery')} id={id} comp="ORDERSUMMARY"/>
             <DataHeader className="text-center p-1">ORDERS SUMMARY - DELIVERIES</DataHeader>
+            <DisplayTableData state={orderDetails.filter(a => a.DEL_MODE === 'delivery')} id={id} comp="ORDERSUMMARY"/>
+            <DataHeader className="text-center p-1">ORDERS SUMMARY - SELF</DataHeader>
             {/* {console.log(orderDetails)} */}
             <DisplayTableData state={orderDetails.filter(a => a.DEL_MODE === 'self')} id={id} comp="ORDERSUMMARY"/>
             <div className="d-flex justify-content-center">

@@ -7,6 +7,10 @@ export default function Reports() {
   return (
     <SigninContainer className="container">
       <div className="d-flex justify-content-center flex-wrap">
+      <Link to="/allorders" className="btn btn-dark tabs">
+          {" "}
+          All Orders{" "}
+        </Link>
         <Link
           to="/orderssummary"
           className="btn tabs"
@@ -21,7 +25,7 @@ export default function Reports() {
           style={{ background: "var(--amzonChime)" }}
         >
           {" "}
-          OrdersSummary - LocWise{" "}
+          Orders-Locations {" "}
         </Link>
         <Link
           to="/deliveryreport"

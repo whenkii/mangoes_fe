@@ -123,7 +123,7 @@ export default function UpateProduct() {
           if (data === "OK") {
             // alert("Account created successfully");
             toast.success("Product updated successfully");
-            history.push("/account");
+            history("/admin");
           } else {
             // alert(data);
             toast.warning(data);
@@ -131,6 +131,7 @@ export default function UpateProduct() {
         })
         .catch((e) => {
           toast.error("Couldn't do the DB action");
+          // console.log(e)
           // if error, return 0 rows
           return [];
         });

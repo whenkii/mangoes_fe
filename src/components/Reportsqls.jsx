@@ -61,12 +61,12 @@ export function OrdersSummaryByLocation(props) {
     const navigate = useNavigate();
     const {id}= useParams()
     // const [accountInfo] = useContext(accountsContext);
-    const query = `select location,p.name,sum(qty) Total_Orders,sum((case when status='NEW' THEN qty ELSE 0 END)) NEW,sum((case when status='NEW' THEN 0 ELSE qty END)) DELIVERED
+    const query = `select del_mode,location,p.name,sum(qty) Total_Orders,sum((case when status='NEW' THEN qty ELSE 0 END)) NEW,sum((case when status='NEW' THEN 0 ELSE qty END)) DELIVERED
     from orders o,products p,deliveries d
     where o.prodid=p.id and o.id=d.order_id
     and latest='Y'
     and status != 'CANCELLED'
-    group by location,p.name
+    group by location,p.name,del_mode
     order by location desc` ;
     const [orderDetails,setOrderDetails]= useState([]);
 
@@ -90,8 +90,11 @@ export function OrdersSummaryByLocation(props) {
         <OrdeDetailsContainer className="container">
           { !isLoading ?
           <div>
-            <DataHeader className="text-center p-1">ORDERS SUMMARY - LOCATION WISE</DataHeader>
-            <DisplayTableData state={orderDetails} id={id} comp="ORDERSUMMARY"/>
+            <DataHeader className="text-center p-1">ORDERS SUMMARY - SELF</DataHeader>
+            <DisplayTableData state={orderDetails.filter(a => a.DEL_MODE === 'delivery')} id={id} comp="ORDERSUMMARY"/>
+            <DataHeader className="text-center p-1">ORDERS SUMMARY - DELIVERIES</DataHeader>
+            {/* {console.log(orderDetails)} */}
+            <DisplayTableData state={orderDetails.filter(a => a.DEL_MODE === 'self')} id={id} comp="ORDERSUMMARY"/>
             <div className="d-flex justify-content-center">
                 <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
                 <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>

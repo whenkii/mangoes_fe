@@ -27,10 +27,6 @@ export default function SignIn() {
           {" "}
           Products{" "}
         </Link>
-        <Link to="/allorders" className="btn btn-dark tabs">
-          {" "}
-          All Orders{" "}
-        </Link>
         <Link to="/shipments" className="btn btn-dark tabs">
           {" "}
           Shipments{" "}

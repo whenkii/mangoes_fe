@@ -181,7 +181,7 @@ export function AllOrders() {
 export function Products() {
     const [accountInfo] = useContext(accountsContext);
     const navigate = useNavigate();
-    const query = `select a.NAME,UNITS,PRICE,OFFERPRICE,stock,active,ordered,TO_CHAR(a.ts,'DD-Mon-YY HH24:MI') created from products a left join stock b on(a.name=b.name)`;
+    const query = `select a.NAME,UNITS,PRICE,OFFERPRICE,stock,active,instock,ordered,TO_CHAR(a.ts,'DD-Mon-YY HH24:MI') created from products a left join stock b on(a.name=b.name)`;
     const [orderDetails,setOrderDetails]= useState([]);
     const [isLoading,setIsLoading]= useState(true);
     const [loadingError,setIsLoadingError]= useState("Fetching data");

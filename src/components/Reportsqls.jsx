@@ -69,6 +69,7 @@ export function OrdersSummaryByLocation(props) {
     group by location,p.name,del_mode
     order by location desc` ;
     const [orderDetails,setOrderDetails]= useState([]);
+    
 
     //Mount - Get Orders details
     useEffect(() => {

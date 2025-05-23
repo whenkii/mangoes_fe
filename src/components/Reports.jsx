@@ -23,6 +23,14 @@ export default function Reports() {
           {" "}
           OrdersSummary - LocWise{" "}
         </Link>
+        <Link
+          to="/deliveryreport"
+          className="btn tabs"
+          style={{ background: "var(--amzonChime)" }}
+        >
+          {" "}
+          DeliveryReport{" "}
+        </Link>
         
       </div>
 

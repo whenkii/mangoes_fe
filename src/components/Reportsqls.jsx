@@ -17,6 +17,7 @@ export function OrdersSummary(props) {
     from orders o,products p,deliveries d
     where o.prodid=p.id and o.id=d.order_id
     and latest='Y'
+    and status != 'CANCELLED'
     group by p.name
     order by 2 desc` ;
     const [orderDetails,setOrderDetails]= useState([]);
@@ -32,6 +33,7 @@ export function OrdersSummary(props) {
         setIsLoading(false);
                          })
         .catch((e) => {
+            // console.log(query)
                        alert( `Couldn't get Orders from API\n ` + e);
                         })
     }, [query])
@@ -63,8 +65,50 @@ export function OrdersSummaryByLocation(props) {
     from orders o,products p,deliveries d
     where o.prodid=p.id and o.id=d.order_id
     and latest='Y'
+    and status != 'CANCELLED'
     group by location,p.name
     order by location desc` ;
+    const [orderDetails,setOrderDetails]= useState([]);
+
+    //Mount - Get Orders details
+    useEffect(() => {
+        axios.get(`${config.restAPIserver}:${config.restAPIHost}/api/getSqlresult/${query}`)
+        .then((result) => {
+            let {data} = result;
+            let {rows} = data;
+    //Set state once data is returned from AXIOS
+        setOrderDetails(rows);
+        setIsLoading(false);
+                         })
+        .catch((e) => {
+                       alert( `Couldn't get Orders from API\n ` + e);
+                        })
+    }, [query])
+    //Unmount
+    useEffect(() => () => {}, []) 
+    return (
+        <OrdeDetailsContainer className="container">
+          { !isLoading ?
+          <div>
+            <DataHeader className="text-center p-1">ORDERS SUMMARY - LOCATION WISE</DataHeader>
+            <DisplayTableData state={orderDetails} id={id} comp="ORDERSUMMARY"/>
+            <div className="d-flex justify-content-center">
+                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
+                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+            </div>
+            </div>
+            : <AllSpinners />
+          }
+        </OrdeDetailsContainer>
+    )
+}
+
+export function DeliveryReport(props) {
+    const [isLoading,setIsLoading]= useState(true);
+    const navigate = useNavigate();
+    const {id}= useParams()
+    // const [accountInfo] = useContext(accountsContext);
+    const query = `SELECT * from deliveryreport_vw order by postalcode` ;
     const [orderDetails,setOrderDetails]= useState([]);
 
     //Mount - Get Orders details

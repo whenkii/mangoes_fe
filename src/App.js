@@ -13,7 +13,7 @@ import NotFound from "./components/NotFound";
 import OrderConfirmation from "./components/OrderConfirmation";
 import ProductInfo from "./components/ProductInfo";
 import { Orders, OrderDetails, Products, AllOrders } from "./components/Orders";
-import { OrdersSummary,OrdersSummaryByLocation } from "./components/Reportsqls";
+import { OrdersSummary,OrdersSummaryByLocation,DeliveryReport } from "./components/Reportsqls";
 import Checkout from "./components/Checkout";
 import AddComments from "./components/AddComments";
 import AddstockComments from "./components/AddstockComments";
@@ -65,6 +65,7 @@ function App() {
               <Route exact path="/adminreports" element={<Reports />} />
               <Route exact path="/orderssummary" element={<OrdersSummary />} />
               <Route exact path="/orderssummarybylocation" element={<OrdersSummaryByLocation />} />
+              <Route exact path="/deliveryreport" element={<DeliveryReport />} />
               <Route exact path="/" element={<ProductList />} />
               <Route element={<NotFound />} />
             </Routes>

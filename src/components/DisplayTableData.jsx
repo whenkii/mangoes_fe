@@ -8,8 +8,17 @@ import { ToastContainer, toast } from 'react-toastify';
 import { accountsContext } from '../contexts/accountsContext';
 
 export default function DisplayTableData({ state, comp, id, bgClr }) {
+    const compListForCheckBoxes= ["ALLORDERS", "DELREPORT"]
+    const compListForDelStatus= ["DELREPORT"]
     const navigate = useNavigate();
     const [accountInfo] = useContext(accountsContext);
+
+    const [selectedRows, setSelectedRows] = useState([]);
+    const handleCheckboxChange = (id) => {
+        setSelectedRows(prev =>
+            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+        );
+    };
 
     const [stateVar, setOrderDetails] = useState(state);
     const [sort, setSort] = useState({ propertyName: "", mode: 'ASC' });
@@ -48,7 +57,10 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
 
     const OrderAction = (action) => {
         const sql = `update orders set status='${action}',modified_by='${accountInfo.email}' where id=${id}`;
-        if (action === 'COMMENTS') {
+        if (action === 'UPD_ADDRESS'){
+            navigate(`/updateAddress/${id}`) 
+            }
+         else if (action === 'COMMENTS') {
             navigate(`/addcomments/${id}`);
         } else if (action === 'STOCK') {
             navigate(`/STOCK/${id}`);
@@ -64,6 +76,56 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                 })
                 .catch((e) => alert(e));
         }
+    };
+
+    const ActionOnData = (action) => {
+
+    if (comp === "ALLORDERS") {
+             const sql = `update orders set status='${action}',modified_by='${accountInfo.email}' where id in (${selectedRows.join(',')})`;
+            if (action === 'CLEAR') {
+            setSelectedRows([]);
+              }
+            else if (selectedRows.length === 0) {
+            toast.error("No rows selected !");
+              } 
+              else {
+                 GetApiDataUpdate(sql)
+                .then((res) => {
+                    if (res > 0) {
+                        setSelectedRows([]);
+                        toast.success(`Marked ${action}`);
+                        // navigate(-1);
+                    } else {
+                        toast.error("Error !!!");
+                    }
+                })
+                .catch((e) => alert(e));
+        }
+        }
+
+        if (comp === "DELREPORT") {
+
+           if (action === 'CLEAR') {
+           setSelectedRows([]);
+             }
+           else if (selectedRows.length === 0) {
+           toast.error("No rows selected !");
+             } 
+            else if (action === 'MANUAL' || action === 'DELIVERY') { 
+            const sql = `update deliveries set manual_del='${action}' where order_id in (${selectedRows.join(',')})`;
+                GetApiDataUpdate(sql)
+               .then((res) => {
+                   if (res > 0) {
+                       setSelectedRows([]);
+                       toast.success(`Marked ${action}`);
+                       // navigate(-1);
+                   } else {
+                       toast.error("Error !!!");
+                   }
+               })
+               .catch((e) => alert(e));
+       }
+       }
     };
 
     const filteredData = stateVar.filter(item =>
@@ -95,11 +157,12 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                 <>
                     {comp === "ORDERDETAILS" &&
                         <div className="d-flex justify-content-center">
-                            <div className="btn btn-success m-1" onClick={() => OrderAction("DELIVERED")}>DELIVERED</div>
-                            <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCELLED</div>
-                            <div className="btn btn-warning m-1" onClick={() => OrderAction("NEW")}>NEW</div>
+                            {/* <div className="btn btn-success m-1" onClick={() => OrderAction("DELIVERED")}>DELIVERED</div>
+                            <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCELLED</div> */}
+                            {/* <div className="btn btn-warning m-1" onClick={() => OrderAction("NEW")}>NEW</div> */}
+                            <div className="btn btn-warning m-1" onClick={() => OrderAction("UPD_ADDRESS")}>UPD ADDRESS</div>
                             <div className="btn btn-info m-1" onClick={() => OrderAction("COMMENTS")}>COMMENTS</div>
-                            <div className="btn btn-secondary m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
+                            <div className="btn btn-success m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
                         </div>
                     }
 
@@ -152,7 +215,29 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                             Reset Filters
                         </button>
                     </div>
-                </div>
+                </div>}
+                {compListForCheckBoxes.includes(comp) && 
+                        <div className="col-md-2">
+                            
+                            <div className="d-flex justify-content-center">
+                            <div className="btn text-white fw-bold m-1"> UPD STATUS </div>
+                                
+                                <div className="btn btn-warning m-1" onClick={() => ActionOnData("DELIVERED")}>DELIVERED</div>
+                                <div className="btn btn-success m-1" onClick={() => ActionOnData("NEW")}>NEW</div>
+                            </div>
+
+                            {compListForDelStatus.includes(comp) && 
+                            <div className="d-flex justify-content-center">
+                                <div className="btn text-white fw-bold m-1">DEL_TYPE </div>
+                                <div className="btn btn-danger m-1" onClick={() => ActionOnData("MANUAL")}>MANUAL</div>
+                                <div className="btn btn-info m-1" onClick={() => ActionOnData("DELIVERY")}>DELIVERY</div>
+                            </div>}
+
+                            <div className="d-flex justify-content-left">
+                            <div className="btn btn-danger" onClick={() => ActionOnData("CLEAR")}>CLEAR</div>
+                            </div>
+
+                        </div> // ✅ This closing div was missing
                     }
                     <div className="d-flex justify-content-end">
                         <CSVLink className="text-danger csv-exporter mb-1" data={filteredData}>Export CSV</CSVLink>
@@ -162,6 +247,7 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                         <table className="table text-center">
                             <thead className="thead">
                                 <tr className="header">
+                                {compListForCheckBoxes.includes(comp) && (<th className="border">Select</th>)}
                                     {Object.keys(stateVar[0]).map((item, index) =>
                                         <th key={index} className="border">
                                             <ButtonContainer onClick={() => orderbyAttribute(item)}>
@@ -176,6 +262,13 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                             <tbody className={`bod bg-${bgClr}`}>
                                 {filteredData.map((dataArray, index) =>
                                     <tr key={index}>
+                                         {compListForCheckBoxes.includes(comp) && (<td>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedRows.includes(dataArray.ORDER_ID)}
+                                                onChange={() => handleCheckboxChange(dataArray.ORDER_ID)}
+                                            />
+                                        </td>)}
                                         {Object.keys(state[0]).map((attrName, idx) =>
                                             <th key={idx} scope="row" className={`border tdata ${attrName === "PRICE" ? "text-danger" : "text-dark"}`}>
                                                 {attrName === hyperLinks.attr

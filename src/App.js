@@ -26,6 +26,7 @@ import ContactUs from "./components/ContactUs";
 import Shipments from "./components/Shipments";
 import Transactions from "./components/Transactions";
 import TransactionDetails from "./components/TransactionDetails";
+import UpdateAddress from "./components/UpdateAddress";
 // import { FormProvider } from './contexts/formContext';
 // import IdleTimeCotainer from './components/IdleTimeCotainer'
 
@@ -66,6 +67,8 @@ function App() {
               <Route exact path="/orderssummary" element={<OrdersSummary />} />
               <Route exact path="/orderssummarybylocation" element={<OrdersSummaryByLocation />} />
               <Route exact path="/deliveryreport" element={<DeliveryReport />} />
+              <Route exact path="/updateaddress/:id" element={<UpdateAddress />} />
+              
               <Route exact path="/" element={<ProductList />} />
               <Route element={<NotFound />} />
             </Routes>

@@ -157,12 +157,12 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                 <>
                     {comp === "ORDERDETAILS" &&
                         <div className="d-flex justify-content-center">
-                            {/* <div className="btn btn-success m-1" onClick={() => OrderAction("DELIVERED")}>DELIVERED</div>
-                            <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCELLED</div> */}
+                            {/* <div className="btn btn-success m-1" onClick={() => OrderAction("DELIVERED")}>DELIVERED</div>}
                             {/* <div className="btn btn-warning m-1" onClick={() => OrderAction("NEW")}>NEW</div> */}
-                            <div className="btn btn-warning m-1" onClick={() => OrderAction("UPD_ADDRESS")}>UPD ADDRESS</div>
+                            <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCELLED</div> */
                             <div className="btn btn-info m-1" onClick={() => OrderAction("COMMENTS")}>COMMENTS</div>
                             <div className="btn btn-success m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
+                            <div className="btn btn-warning m-1" onClick={() => OrderAction("UPD_ADDRESS")}>UPD ADDRESS</div>
                         </div>
                     }
 
@@ -217,11 +217,10 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                     </div>
                 </div>}
                 {compListForCheckBoxes.includes(comp) && 
-                        <div className="col-md-2">
+                        <div className="col-md-2 d-flex flex-column">
                             
                             <div className="d-flex justify-content-center">
-                            <div className="btn text-white fw-bold m-1"> UPD STATUS </div>
-                                
+                                <div className="btn text-white fw-bold m-1"> UPD STATUS </div>
                                 <div className="btn btn-warning m-1" onClick={() => ActionOnData("DELIVERED")}>DELIVERED</div>
                                 <div className="btn btn-success m-1" onClick={() => ActionOnData("NEW")}>NEW</div>
                             </div>
@@ -237,8 +236,8 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                             <div className="btn btn-danger" onClick={() => ActionOnData("CLEAR")}>CLEAR</div>
                             </div>
 
-                        </div> // ✅ This closing div was missing
-                    }
+                        </div> 
+                }
                     <div className="d-flex justify-content-end">
                         <CSVLink className="text-danger csv-exporter mb-1" data={filteredData}>Export CSV</CSVLink>
                     </div>

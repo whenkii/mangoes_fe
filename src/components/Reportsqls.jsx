@@ -91,15 +91,16 @@ export function OrdersSummaryByLocation(props) {
         <OrdeDetailsContainer className="container">
           { !isLoading ?
           <div>
+
+            <div className="d-flex justify-content-center">
+                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
+                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+            </div>
             <DataHeader className="text-center p-1">ORDERS SUMMARY - DELIVERIES</DataHeader>
             <DisplayTableData state={orderDetails.filter(a => a.DEL_MODE === 'delivery')} id={id} comp="ORDERSUMMARY"/>
             <DataHeader className="text-center p-1">ORDERS SUMMARY - SELF</DataHeader>
             {/* {console.log(orderDetails)} */}
             <DisplayTableData state={orderDetails.filter(a => a.DEL_MODE === 'self')} id={id} comp="ORDERSUMMARY"/>
-            <div className="d-flex justify-content-center">
-                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
-                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
-            </div>
             </div>
             : <AllSpinners />
           }
@@ -136,11 +137,12 @@ export function DeliveryReport(props) {
           { !isLoading ?
           <div>
             <DataHeader className="text-center p-1">ORDERS SUMMARY - LOCATION WISE</DataHeader>
-            <DisplayTableData state={orderDetails} id={id} comp="DELREPORT"/>
             <div className="d-flex justify-content-center">
                 <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
                 <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
             </div>
+            <DisplayTableData state={orderDetails} id={id} comp="DELREPORT"/>
+            
             </div>
             : <AllSpinners />
           }

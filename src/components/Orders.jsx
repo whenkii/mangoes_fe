@@ -7,6 +7,7 @@ import {accountsContext} from '../contexts/accountsContext'
 import {productContext} from '../contexts/mangoesContext'
 import {config} from './reactConfig'
 import {AllSpinners} from './Spinners';
+import {BackButton} from './Utils/Buttons';
 
 
 
@@ -44,8 +45,9 @@ export function Orders() {
             </>
             : <p className="text-white text-center"> Please <Link className="text-danger" to="/signin">Signin </Link> to see your Orders </p>}
             <div className="d-flex justify-content-center">
-                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
-                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+                <BackButton label="Go Back" onClick={() => navigate(-1)} /> 
+                {/* <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div> */}
+                {/* <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div> */}
             </div>
         </OrdersContainer>
     )
@@ -79,8 +81,9 @@ export function OrderDetails(props) {
             <DataHeader className="text-center p-1">ORDER DETAILS</DataHeader>
             <DisplayTableData state={orderDetails} id={id} comp="ORDERDETAILS"/>
             <div className="d-flex justify-content-center">
-                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
-                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+            <BackButton label="Go Back" onClick={() => navigate(-1)} /> 
+                {/* <div className="btn btn-dark btn-sized-md m-1 btn-outline-light" onClick={() => navigate(-1)}>Go Back</div> */}
+                {/* <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div> */}
             </div>
         </OrdeDetailsContainer>
     )
@@ -113,8 +116,9 @@ export function OrderSummary(props) {
             <DataHeader className="text-center p-1">ORDERS SUMMARY</DataHeader>
             <DisplayTableData state={orderDetails} id={id} comp="ORDERSUMMARY"/>
             <div className="d-flex justify-content-center">
-                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
-                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+            <BackButton label="Go Back" onClick={() => navigate(-1)} /> 
+                {/* <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div> */}
+                {/* <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div> */}
             </div>
         </OrdeDetailsContainer>
     )
@@ -157,8 +161,9 @@ export function AllOrders() {
             <>  
             <DataHeader className="text-center p-1">ALL ORDERS</DataHeader>
             <div className="d-flex justify-content-center">
-                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
-                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+            <BackButton label="Go Back" onClick={() => navigate(-1)} /> 
+                {/* <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div> */}
+                {/* <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div> */}
             </div>
             <div className="d-flex flex-column justify-content-center text-center card">
                 <div className="text-dark fw-bold"> Total : <span className="cartTotHeaders">{orderTotal}</span></div>
@@ -171,8 +176,9 @@ export function AllOrders() {
             </>
             : <p className="text-white text-center"> Please <Link className="text-danger" to="/signin">Signin </Link> to see your Orders </p>}
             <div className="d-flex justify-content-center">
-                <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
-                <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
+                <BackButton label="Go Back" onClick={() => navigate(-1)} /> 
+                {/* <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div> */}
+                {/* <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div> */}
             </div>
         </OrdersContainer>
     )

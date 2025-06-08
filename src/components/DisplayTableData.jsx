@@ -26,7 +26,8 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
         STATUS: '',
         DEL_MODE: '',
         PAYMENT_UPD_BY: '',
-        LOCATION: []
+        LOCATION: [],
+        MANUAL:''
     });
 
     const hyperLinks = { attr: "ORDER_ID", link: "/orderdetails" };
@@ -112,7 +113,7 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
            toast.error("No rows selected !");
              } 
             else if (action === 'MANUAL' || action === 'DELIVERY') { 
-            const sql = `update deliveries set manual_del='${action}' where order_id in (${selectedRows.join(',')})`;
+            const sql = `update orders set manual_del='${action}' where id in (${selectedRows.join(',')})`;
                 GetApiDataUpdate(sql)
                .then((res) => {
                    if (res > 0) {
@@ -125,12 +126,27 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                })
                .catch((e) => alert(e));
        }
+       else if (action === 'DELIVERED' || action === 'NEW') { 
+        const sql = `update orders set status='${action}',modified_by='${accountInfo.email}' where id in (${selectedRows.join(',')})`;
+            GetApiDataUpdate(sql)
+           .then((res) => {
+               if (res > 0) {
+                   setSelectedRows([]);
+                   toast.success(`Marked ${action}`);
+                   // navigate(-1);
+               } else {
+                   toast.error("Error !!!");
+               }
+           })
+           .catch((e) => alert(e));
+        }
        }
     };
 
     const filteredData = stateVar.filter(item =>
         (filters.STATUS ? (item.STATUS || '').toLowerCase() === filters.STATUS.toLowerCase() : true) &&
         (filters.DEL_MODE ? (item.DEL_MODE || '').toLowerCase() === filters.DEL_MODE.toLowerCase() : true) &&
+        (filters.MANUAL ? (item.MANUAL || '').toLowerCase() === filters.MANUAL.toLowerCase() : true) &&
         (filters.PAYMENT_UPD_BY ? (item.PAYMENT_UPD_BY || '').toLowerCase() === filters.PAYMENT_UPD_BY.toLowerCase() : true) &&
         (filters.LOCATION.length > 0 ? filters.LOCATION.includes(item.LOCATION) : true)
     );
@@ -157,12 +173,12 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                 <>
                     {comp === "ORDERDETAILS" &&
                         <div className="d-flex justify-content-center">
-                            {/* <div className="btn btn-success m-1" onClick={() => OrderAction("DELIVERED")}>DELIVERED</div>}
+                            <div className="btn btn-success m-1" onClick={() => OrderAction("DELIVERED")}>DELIVERED</div>
                             {/* <div className="btn btn-warning m-1" onClick={() => OrderAction("NEW")}>NEW</div> */}
-                            <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCELLED</div> */
+                            <div className="btn btn-danger m-1" onClick={() => OrderAction("CANCELLED")}>CANCEL</div> */
                             <div className="btn btn-info m-1" onClick={() => OrderAction("COMMENTS")}>COMMENTS</div>
-                            <div className="btn btn-success m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
-                            <div className="btn btn-warning m-1" onClick={() => OrderAction("UPD_ADDRESS")}>UPD ADDRESS</div>
+                            <div className="btn btn-primary m-1" onClick={() => OrderAction("STOCK")}>STOCK</div>
+                            <div className="btn btn-warning m-1" onClick={() => OrderAction("UPD_ADDRESS")}>ADDRESS</div>
                         </div>
                     }
 
@@ -170,6 +186,55 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                     {comp === "ALLORDERS" &&
                     <div className="row my-2 justify-content-around">
                     {["STATUS", "DEL_MODE", "PAYMENT_UPD_BY"].map((key) => (
+                        <div className="col-md-2" key={key}>
+                            <select
+                                className="form-select"
+                                value={filters[key]}
+                                onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
+                            >
+                                <option value="">{`All ${key.toUpperCase()}`}</option>
+                                {getDistinctValues(stateVar, key).map((val, idx) => (
+                                    <option key={idx} value={val}>{val}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ))}
+                
+                    {/* Multi-select for LOCATION */}
+                    <div className="col-md-3">
+                        <select
+                            className="form-select"
+                            multiple
+                            value={filters.LOCATION}
+                            onChange={(e) => {
+                                const options = Array.from(e.target.selectedOptions, option => option.value);
+                                setFilters(prev => ({ ...prev, LOCATION: options }));
+                            }}
+                        >
+                            {getDistinctValues(stateVar, "LOCATION").map((val, idx) => (
+                                <option key={idx} value={val}>{val}</option>
+                            ))}
+                        </select>
+                        <small className="text-muted">Hold Ctrl or Cmd to select multiple</small>
+                    </div>
+                
+                    <div className="col-md-2">
+                        <button
+                            className="btn btn-outline-secondary w-100"
+                            onClick={() => setFilters({
+                                STATUS: '',
+                                DEL_MODE: '',
+                                PAYMENT_UPD_BY: '',
+                                LOCATION: []
+                            })}
+                        >
+                            Reset Filters
+                        </button>
+                    </div>
+                </div>}
+                {comp === "DELREPORT" &&
+                    <div className="row my-2 justify-content-around">
+                    {["STATUS", "MANUAL"].map((key) => (
                         <div className="col-md-2" key={key}>
                             <select
                                 className="form-select"
@@ -241,7 +306,23 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                     <div className="d-flex justify-content-end">
                         <CSVLink className="text-danger csv-exporter mb-1" data={filteredData}>Export CSV</CSVLink>
                     </div>
-
+                    {selectedRows.length > 0 && (
+    <div className="alert alert-info">
+        <strong>Selected Orders:</strong>
+        <div className="row mt-2">
+            {stateVar
+                .filter(row => selectedRows.includes(row.ORDER_ID))
+                .map((row, idx) => (
+                    <div key={idx} className="col-md-4 col-sm-6 mb-2">
+                        <div className="card p-2">
+                            <div><strong>ID:</strong> {row.ORDER_ID}</div>
+                            <div><strong>Address:</strong> {row.ADDRESS}</div>
+                        </div>
+                    </div>
+                ))}
+        </div>
+    </div>
+)}
                     <div className="table-responsive bordered">
                         <table className="table text-center">
                             <thead className="thead">
@@ -259,8 +340,9 @@ export default function DisplayTableData({ state, comp, id, bgClr }) {
                                 </tr>
                             </thead>
                             <tbody className={`bod bg-${bgClr}`}>
+                                
                                 {filteredData.map((dataArray, index) =>
-                                    <tr key={index}>
+                                    <tr key={index} className={selectedRows.includes(dataArray.ORDER_ID) ? "table-success" : ""}>
                                          {compListForCheckBoxes.includes(comp) && (<td>
                                             <input
                                                 type="checkbox"

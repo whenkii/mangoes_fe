@@ -136,7 +136,7 @@ export function DeliveryReport(props) {
         <OrdeDetailsContainer className="container">
           { !isLoading ?
           <div>
-            <DataHeader className="text-center p-1">ORDERS SUMMARY - LOCATION WISE</DataHeader>
+            <DataHeader className="text-center p-1">DELIVERY REPORT</DataHeader>
             <div className="d-flex justify-content-center">
                 <div className="btn btn-warning btn-sized-md m-1" onClick={() => navigate(-1)}>Go Back</div>
                 <div className="btn btn-success btn-sized-md m-1" onClick={() => navigate("/")}>Home</div>
